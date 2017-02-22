@@ -18,6 +18,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from Spaces.views import *
+from ShareUser.views import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -30,4 +31,5 @@ urlpatterns = [
     url(r'space/(?P<space_id>\d+)/item/(?P<pk>\d+)$', login_required(SharedItemDetailView.as_view()), name='shared-item-detail'),
     url(r'space/(?P<space_id>\d+)/comment/(?P<shareditem_id>\d+)$', login_required(CommentCreateView.as_view()), name='comment-add'),
     url(r'space/(?P<space_id>\d+)/add/$', login_required(SharedItemCreateView.as_view(success_url="/")), name='shareditem-add'),
+    url(r'profile$', login_required(ShareUserUpdateView.as_view(success_url="/")), name='shareuser-update'),
 ]

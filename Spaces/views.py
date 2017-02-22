@@ -6,6 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
 import requests
 import http.client, urllib
+from ShareUser.models import *
 # Create your views here.
 
 class SpacesListView(ListView):
@@ -42,9 +43,7 @@ class SharedItemListView(ListView):
         return 1 if not 'space_id' in self.kwargs else self.kwargs['space_id']
 
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
         context = super(SharedItemListView, self).get_context_data(**kwargs)
-        # Add in the publisher
         context['space'] = self.get_space_id()
         return context
 
@@ -62,7 +61,7 @@ class SharedItemCreateView(CreateView):
 
     def form_valid(self, form):
         if not form.instance.text:
-            form.instance.text = get_title_from_url(form.instance.url)
+            form.instance.text = get_title_from_url(form.instance.url)[:50]
         form.instance.shared_by = self.request.user
         form.instance.space = Space.objects.get(id=self.kwargs['space_id'])
         return super(CreateView, self).form_valid(form)
@@ -84,14 +83,3 @@ def get_title_from_url(url):
         return al[al.find('<title>') + 7: al.find('</title>')]
     except Exception as e:
         print(e)
-
-
-def send_notification_to_added_users(user_key, message):
-    conn = http.client.HTTPSConnection("api.pushover.net:443")
-    conn.request("POST", "/1/messages.json",
-                 urllib.parse.urlencode({
-                     "token": "APP_TOKEN",
-                     "user": "USER_KEY",
-                     "message": message,
-                 }), {"Content-type": "application/x-www-form-urlencoded"})
-    conn.getresponse()

@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from ShareUser.models import *
 # Create your models here.
 
 
@@ -17,6 +20,14 @@ class SharedItem(models.Model):
     shared_at = models.DateTimeField(auto_now_add=True)
     space = models.ForeignKey(to=Space)
 
+    def get_absolute_url(self):
+        return reverse('shared-item-detail', kwargs={'space_id': self.space.id, 'pk': self.pk})
+
+@receiver(post_save, sender=SharedItem)
+def send_notification_to_all(sender, instance, created, **kwargs):
+    for user in instance.space.added_users.all():
+        s_user = ShareUser.objects.get(user=user)
+        s_user.send_notification(instance)
 
 class Comment(models.Model):
     text = models.TextField()
@@ -25,4 +36,4 @@ class Comment(models.Model):
     shared_item = models.ForeignKey(to=SharedItem)
 
     def get_absolute_url(self):
-        return reverse('shared-item-detail', kwargs={'space_id': self.shared_item.space.id, 'pk': self.shared_item.pk})
+        return self.shared_item.get_absolute_url()
