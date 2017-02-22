@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 # Create your models here.
 
 
@@ -20,5 +21,8 @@ class SharedItem(models.Model):
 class Comment(models.Model):
     text = models.TextField()
     user = models.ForeignKey(to=User)
-    created = models.DateTimeField(auto_created=True)
+    created = models.DateTimeField(auto_now_add=True)
     shared_item = models.ForeignKey(to=SharedItem)
+
+    def get_absolute_url(self):
+        return reverse('shared-item-detail', kwargs={'space_id': self.shared_item.space.id, 'pk': self.shared_item.pk})

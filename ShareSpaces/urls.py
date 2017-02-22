@@ -27,5 +27,7 @@ urlpatterns = [
     url(r'spaces/add/$', login_required(SpacesCreateView.as_view(success_url="/")), name='spaces-add'),
     url(r'spaces/update/(?P<pk>\d+)/$', login_required(SpacesUpdateView.as_view(success_url="/")), name='spaces-update'),
     url(r'space/(?P<space_id>\d+)$', login_required(SharedItemListView.as_view()), name='shared-item-list'),
+    url(r'space/(?P<space_id>\d+)/item/(?P<pk>\d+)$', login_required(SharedItemDetailView.as_view()), name='shared-item-detail'),
+    url(r'space/(?P<space_id>\d+)/comment/(?P<shareditem_id>\d+)$', login_required(CommentCreateView.as_view()), name='comment-add'),
     url(r'space/(?P<space_id>\d+)/add/$', login_required(SharedItemCreateView.as_view(success_url="/")), name='shareditem-add'),
 ]

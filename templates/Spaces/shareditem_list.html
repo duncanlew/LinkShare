@@ -21,6 +21,7 @@
       </div>
       <div class="card-action">
         <a href="{{ shared_item.url }}">Visit Shared Item</a>
+        <a href="{% url 'shared-item-detail' shared_item.space.id shared_item.pk %}">Leave a Comment</a>
       </div>
     </div>
   </div>

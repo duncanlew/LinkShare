@@ -3,6 +3,7 @@ from .models import *
 from django.views.generic.list import ListView
 from django.db.models import Q
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.detail import DetailView
 import requests
 import http.client, urllib
 # Create your views here.
@@ -24,9 +25,11 @@ class SpacesCreateView(CreateView):
         form.instance.owner = self.request.user
         return super(CreateView, self).form_valid(form)
 
+
 class SpacesUpdateView(UpdateView):
     model = Space
     fields = ['name', 'added_users']
+
 
 class SharedItemListView(ListView):
     model = SharedItem
@@ -45,20 +48,33 @@ class SharedItemListView(ListView):
         context['space'] = self.get_space_id()
         return context
 
+class SharedItemDetailView(DetailView):
+    model = SharedItem
+
+    def get_context_data(self, **kwargs):
+        context = super(SharedItemDetailView, self).get_context_data(**kwargs)
+        context['comments'] = Comment.objects.filter(shared_item=self.object)
+        return context
 
 class SharedItemCreateView(CreateView):
     model = SharedItem
     fields = ['url', 'text']
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
         if not form.instance.text:
             form.instance.text = get_title_from_url(form.instance.url)
         form.instance.shared_by = self.request.user
         form.instance.space = Space.objects.get(id=self.kwargs['space_id'])
         return super(CreateView, self).form_valid(form)
 
+class CommentCreateView(CreateView):
+    model = Comment
+    fields = ['text']
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.shared_item = SharedItem.objects.get(id=self.kwargs['shareditem_id'])
+        return super(CreateView, self).form_valid(form)
 
 def get_title_from_url(url):
     try:
