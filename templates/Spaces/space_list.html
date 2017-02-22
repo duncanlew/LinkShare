@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Spaces{% endblock %}
+
+{% block content %}
+
+  <h2>Your Spaces</h2>
+        <a href="{% url 'spaces-add' %}">Create new Space</a>
+
+        {% for space in object_list %}
+            <div class="row">
+                <div class="col s12 m7">
+                  <div class="card">
+                    <div class="card-image">
+                      <img src="http://materializecss.com/images/sample-1.jpg">
+                      <span class="card-title">{{ space.name }}</span>
+                    </div>
+                    <div class="card-content">
+                      <p></p>
+                    </div>
+                    <div class="card-action">
+                      <a href="{% url 'shared-item-list' space.id %}">View Space content</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+    {% endfor %}
+
+{% endblock %}

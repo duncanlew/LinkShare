@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Spaces{% endblock %}
+
+{% block content %}
+
+  <h2>Create new Space</h2>
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save" />
+</form>
+
+    <script type="text/javascript">
+          $(document).ready(function() {
+            $('select').material_select();
+          });
+    </script>
+{% endblock %}
