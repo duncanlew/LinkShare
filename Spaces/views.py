@@ -7,7 +7,6 @@ import requests
 import http.client, urllib
 # Create your views here.
 
-
 class SpacesListView(ListView):
     model = Space
 
@@ -25,18 +24,25 @@ class SpacesCreateView(CreateView):
         form.instance.owner = self.request.user
         return super(CreateView, self).form_valid(form)
 
+class SpacesUpdateView(UpdateView):
+    model = Space
+    fields = ['name', 'added_users']
 
 class SharedItemListView(ListView):
     model = SharedItem
+    paginate_by = 10
 
     def get_queryset(self):
-        return SharedItem.objects.filter(space=self.kwargs['space_id']).order_by('-shared_at')
+        return SharedItem.objects.filter(space=self.get_space_id()).order_by('-shared_at')
+
+    def get_space_id(self):
+        return 1 if not 'space_id' in self.kwargs else self.kwargs['space_id']
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(SharedItemListView, self).get_context_data(**kwargs)
         # Add in the publisher
-        context['space'] = self.kwargs['space_id']
+        context['space'] = self.get_space_id()
         return context
 
 
@@ -55,10 +61,13 @@ class SharedItemCreateView(CreateView):
 
 
 def get_title_from_url(url):
-    headers = {'headers': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0'}
-    n = requests.get(url, headers=headers)
-    al = n.text
-    return al[al.find('<title>') + 7: al.find('</title>')]
+    try:
+        headers = {'headers': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0'}
+        n = requests.get(url, headers=headers)
+        al = n.text
+        return al[al.find('<title>') + 7: al.find('</title>')]
+    except Exception as e:
+        print(e)
 
 
 def send_notification_to_added_users(user_key, message):
