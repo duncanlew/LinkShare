@@ -61,3 +61,5 @@ tests/.coverage
 build/
 tests/report/
 *.pyc
+
+db.sqlite3
