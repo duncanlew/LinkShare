@@ -6,10 +6,10 @@
 
 <h2>Shared content</h2>
 
-<ul>
-  <li><a href="{% url 'shareditem-add' space %}">Share new item</a></li>
-  <li><a href="{% url 'spaces-update' space %}">Edit this space</a></li>
-</ul>
+<div class="col m12">
+  <a href="{% url 'shareditem-add' space %}" class="waves-effect waves-light btn">Share new item</a>
+  <a href="{% url 'spaces-update' space %}" class="waves-effect waves-light btn">Edit this space</a>
+</div>
 
 {% for shared_item in object_list %}
 <div class="row">
