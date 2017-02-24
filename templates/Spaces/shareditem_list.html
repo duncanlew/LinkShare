@@ -5,10 +5,18 @@
 {% block content %}
 
 <h2>Shared content</h2>
-
 <div class="col m12">
-  <a href="{% url 'shareditem-add' space %}" class="waves-effect waves-light btn">Share new item</a>
-  <a href="{% url 'spaces-update' space %}" class="waves-effect waves-light btn">Edit this space</a>
+    {% for user in share_users %}
+    <div class="chip">
+      <img src="/{{ MEDIA_URL }}{{ user.icon }}" alt="Contact Person">
+      {{ user.user.username }}
+    </div>
+    {% endfor %}
+</div>
+
+<div class="col s12 m6">
+  <a href="{% url 'shareditem-add' space.id %}" class="waves-effect waves-light btn">Share new item</a>
+  <a href="{% url 'spaces-update' space.id %}" class="waves-effect waves-light btn">Edit this space</a>
 </div>
 
 {% for shared_item in object_list %}
@@ -27,6 +35,8 @@
   </div>
 </div>
 {% endfor %}
+
+
 
 <ul class="pagination">
   {% for page in page_obj.paginator.page_range %}

@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
-
+{% load materializecss %}
 {% block title %}Your Spaces{% endblock %}
 
 {% block content %}
 
 <h2>Create New Space</h2>
 <form action="" method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Save" />
+    {{ form|materializecss }}
+    <input type="submit" value="Save" class="btn waves-effect waves-light" />
 </form>
 
     <script type="text/javascript">

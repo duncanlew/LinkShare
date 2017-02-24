@@ -63,3 +63,4 @@ tests/report/
 *.pyc
 
 db.sqlite3
+media/

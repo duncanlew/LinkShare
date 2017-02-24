@@ -9,10 +9,11 @@ from pushbullet import Pushbullet
 class ShareUser(models.Model):
     pushbullet_api_key = models.CharField(max_length=255, null=True)
     user = models.OneToOneField(to=User)
+    icon = models.ImageField(upload_to='user_icons/',  default = 'user_icons/user_icon.jpg')
 
-    def send_notification(self, shared_item):
+    def send_notification(self, item):
         pb = Pushbullet(self.pushbullet_api_key)
-        push = pb.push_link(shared_item.text, shared_item.get_absolute_url())
+        push = pb.push_link(item.text, item.get_absolute_url())
 
 @receiver(post_save, sender=User)
 def create_share_user(sender, instance, created, **kwargs):

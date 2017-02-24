@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 
 class ShareUserUpdateView(UpdateView):
     model = ShareUser
-    fields = ['pushbullet_api_key']
+    fields = ['pushbullet_api_key', 'icon']
 
     def get_object(self):
         return get_object_or_404(ShareUser, pk=self.request.user.id)

@@ -44,7 +44,10 @@ class SharedItemListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(SharedItemListView, self).get_context_data(**kwargs)
-        context['space'] = self.get_space_id()
+        space = Space.objects.get(id=self.get_space_id())
+        users = space.added_users.all()
+        context['space'] = space
+        context['share_users'] = ShareUser.objects.filter(user__in=users)
         return context
 
 class SharedItemDetailView(DetailView):
