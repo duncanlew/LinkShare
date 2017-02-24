@@ -47,7 +47,8 @@ class SharedItemListView(ListView):
         space = Space.objects.get(id=self.get_space_id())
         users = space.added_users.all()
         context['space'] = space
-        context['share_users'] = ShareUser.objects.filter(user__in=users)
+        context['share_users'] = list(ShareUser.objects.filter(user__in=users))
+        context['share_users'].append(ShareUser.objects.get(user=space.owner))
         return context
 
 class SharedItemDetailView(DetailView):
