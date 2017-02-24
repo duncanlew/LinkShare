@@ -42,6 +42,7 @@ class Comment(models.Model):
 
 @receiver(post_save, sender=Comment)
 def send_notification_to_all(sender, instance, created, **kwargs):
-    for user in instance.space.added_users.all():
+    instance.text = '{0} says: {1}'.format(instance.user, instance.text)
+    for user in instance.shared_item.space.added_users.all():
         s_user = ShareUser.objects.get(user=user)
         s_user.send_notification(instance)
