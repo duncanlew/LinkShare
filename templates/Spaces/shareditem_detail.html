@@ -12,17 +12,24 @@
         <p>{{ object.url }}</p>
       </div>
       <div class="card-action">
-        <a href="{{ shared_item.url }}">Visit Shared Item</a>
+        <a href="{{ object.url }}">Visit Shared Item</a>
       </div>
     </div>
   </div>
 </div>
 
 <h4>Leave a Comment</h4>
-<form action="{% url 'comment-add' 1 object.id %}" method="post">{% csrf_token %}
-    <textarea name="text"></textarea>
-    <input type="submit" value="Save" />
-</form>
+<div class='row'>
+  <div class='col s12 m6'>
+  <form action="{% url 'comment-add' 1 object.id %}" method="post">{% csrf_token %}
+    <div class="input-field col s12">
+      <textarea id='comment-field' name="text" class="materialize-textarea"></textarea>
+      <label for="comment-field">Leave a Comment</label>
+    </div>
+    <input type="submit" value="Post Comment" class="btn waves-light waves-effect" />
+  </form>
+</div>
+</div>
 
 {% for comment in comments %}
 <div class="row">
@@ -32,7 +39,11 @@
          <p>{{ comment.text }}</p>
        </div>
        <div class="card-action">
-         Posted by {{ comment.user }} at {{ comment.created }}
+         <div class="chip">
+           <img src="/{{ MEDIA_URL }}{{ comment.user.icon }}" alt="Contact Person">
+           {{ comment.user }} at {{ comment.created }}
+         </div>
+
        </div>
      </div>
    </div>

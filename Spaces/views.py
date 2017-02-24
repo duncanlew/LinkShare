@@ -13,7 +13,8 @@ class SpacesListView(ListView):
     model = Space
 
     def get_queryset(self):
-        return Space.objects.filter(Q(owner=self.request.user) | Q(added_users__in=[self.request.user]))
+        s_user = ShareUser.objects.filter(user=self.request.user)
+        return Space.objects.filter(Q(owner=s_user) | Q(added_users__in=[s_user]))
 
 
 class SpacesCreateView(CreateView):
@@ -45,10 +46,9 @@ class SharedItemListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(SharedItemListView, self).get_context_data(**kwargs)
         space = Space.objects.get(id=self.get_space_id())
-        users = space.added_users.all()
         context['space'] = space
-        context['share_users'] = list(ShareUser.objects.filter(user__in=users))
-        context['share_users'].append(ShareUser.objects.get(user=space.owner))
+        context['share_users'] = list(space.added_users.all())
+        context['share_users'].append(space.owner)
         return context
 
 class SharedItemDetailView(DetailView):
@@ -66,7 +66,7 @@ class SharedItemCreateView(CreateView):
     def form_valid(self, form):
         if not form.instance.text:
             form.instance.text = get_title_from_url(form.instance.url)[:50]
-        form.instance.shared_by = self.request.user
+        form.instance.shared_by = ShareUser.objects.get(user=self.request.user)
         form.instance.space = Space.objects.get(id=self.kwargs['space_id'])
         return super(CreateView, self).form_valid(form)
 
@@ -75,7 +75,7 @@ class CommentCreateView(CreateView):
     fields = ['text']
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        form.instance.user = ShareUser.objects.get(user=self.request.user)
         form.instance.shared_item = SharedItem.objects.get(id=self.kwargs['shareditem_id'])
         return super(CreateView, self).form_valid(form)
 

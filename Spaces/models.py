@@ -10,14 +10,14 @@ from ShareSpaces.settings import ALLOWED_HOSTS
 
 class Space(models.Model):
     name = models.CharField(max_length=255)
-    owner = models.ForeignKey(to=User, related_name="%(app_label)s_%(class)s_related")
-    added_users = models.ManyToManyField(to=User)
+    owner = models.ForeignKey(to=ShareUser, related_name="%(app_label)s_%(class)s_related")
+    added_users = models.ManyToManyField(to=ShareUser)
 
 
 class SharedItem(models.Model):
     url = models.CharField(max_length=1000)
     text = models.TextField(blank=True)
-    shared_by = models.ForeignKey(to=User)
+    shared_by = models.ForeignKey(to=ShareUser)
     shared_at = models.DateTimeField(auto_now_add=True)
     space = models.ForeignKey(to=Space)
 
@@ -28,12 +28,12 @@ class SharedItem(models.Model):
 @receiver(post_save, sender=SharedItem)
 def send_notification_to_all(sender, instance, created, **kwargs):
     for user in instance.space.added_users.all():
-        s_user = ShareUser.objects.get(user=user)
+        s_user = user
         s_user.send_notification(instance)
 
 class Comment(models.Model):
     text = models.TextField()
-    user = models.ForeignKey(to=User)
+    user = models.ForeignKey(to=ShareUser)
     created = models.DateTimeField(auto_now_add=True)
     shared_item = models.ForeignKey(to=SharedItem)
 
@@ -44,5 +44,5 @@ class Comment(models.Model):
 def send_notification_to_all(sender, instance, created, **kwargs):
     instance.text = '{0} says: {1}'.format(instance.user, instance.text)
     for user in instance.shared_item.space.added_users.all():
-        s_user = ShareUser.objects.get(user=user)
+        s_user = user
         s_user.send_notification(instance)

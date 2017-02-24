@@ -15,6 +15,9 @@ class ShareUser(models.Model):
         pb = Pushbullet(self.pushbullet_api_key)
         push = pb.push_link(item.text, item.get_absolute_url())
 
+    def __str__(self):
+        return self.user.username
+
 @receiver(post_save, sender=User)
 def create_share_user(sender, instance, created, **kwargs):
     if created:
