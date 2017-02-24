@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.contrib.auth.decorators import login_required
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from Spaces.views import *
@@ -22,7 +22,17 @@ from ShareUser.views import *
 from django.conf.urls.static import static
 from django.conf import settings
 
+from Spaces.models import Space
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'api/spaces', SpaceViewSet)
+router.register(r'api/users', UserViewSet)
+router.register(r'api/share-users', ShareUserViewSet)
+
 urlpatterns = [
+    url(r'^', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),

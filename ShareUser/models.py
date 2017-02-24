@@ -15,6 +15,9 @@ class ShareUser(models.Model):
         pb = Pushbullet(self.pushbullet_api_key)
         push = pb.push_link(item.text, item.get_absolute_url())
 
+    def get_user(self):
+        return User.objects.filter(user__shareuser=self)
+
     def __str__(self):
         return self.user.username
 

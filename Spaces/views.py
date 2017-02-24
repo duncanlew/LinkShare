@@ -7,6 +7,9 @@ from django.views.generic.detail import DetailView
 import requests
 import http.client, urllib
 from ShareUser.models import *
+from rest_framework import routers, serializers, viewsets
+from .serializer import SpaceSerializer
+from ShareUser.serializer import ShareUserSerializer
 # Create your views here.
 
 class SpacesListView(ListView):
@@ -32,6 +35,12 @@ class SpacesUpdateView(UpdateView):
     model = Space
     fields = ['name', 'added_users']
 
+class SpaceViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Space.objects.all()
+    serializer_class = SpaceSerializer
 
 class SharedItemListView(ListView):
     model = SharedItem
