@@ -21,7 +21,6 @@ from Spaces.views import *
 from ShareUser.views import *
 from django.conf.urls.static import static
 from django.conf import settings
-
 from Spaces.models import Space
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -29,10 +28,9 @@ router = routers.DefaultRouter()
 router.register(r'api/spaces', SpaceViewSet)
 router.register(r'api/users', UserViewSet)
 router.register(r'api/share-users', ShareUserViewSet)
+router.register(r'api/shared-items/(?P<space_id>\d+)', SharedItemViewSet, base_name='shareditems')
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
@@ -44,4 +42,6 @@ urlpatterns = [
     url(r'space/(?P<space_id>\d+)/comment/(?P<shareditem_id>\d+)$', login_required(CommentCreateView.as_view()), name='comment-add'),
     url(r'space/(?P<space_id>\d+)/add/$', login_required(SharedItemCreateView.as_view(success_url="/")), name='shareditem-add'),
     url(r'profile$', login_required(ShareUserUpdateView.as_view(success_url="/")), name='shareuser-update'),
+    url(r'^', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

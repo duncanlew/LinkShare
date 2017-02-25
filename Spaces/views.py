@@ -8,7 +8,7 @@ import requests
 import http.client, urllib
 from ShareUser.models import *
 from rest_framework import routers, serializers, viewsets
-from .serializer import SpaceSerializer
+from .serializer import SpaceSerializer, SharedItemSerializer
 from ShareUser.serializer import ShareUserSerializer
 # Create your views here.
 
@@ -27,7 +27,7 @@ class SpacesCreateView(CreateView):
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        form.instance.owner = self.request.user
+        form.instance.owner = ShareUser.objects.get(user=self.request.user)
         return super(CreateView, self).form_valid(form)
 
 
@@ -78,6 +78,16 @@ class SharedItemCreateView(CreateView):
         form.instance.shared_by = ShareUser.objects.get(user=self.request.user)
         form.instance.space = Space.objects.get(id=self.kwargs['space_id'])
         return super(CreateView, self).form_valid(form)
+
+class SharedItemViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    serializer_class = SharedItemSerializer
+
+    def get_queryset(self):
+        space_id = self.kwargs['space_id']
+        return SharedItem.objects.filter(space=space_id)
 
 class CommentCreateView(CreateView):
     model = Comment
