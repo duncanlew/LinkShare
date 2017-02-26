@@ -76,8 +76,6 @@ class SharedItemCreateView(CreateView):
     form_class = SharedItemForm
 
     def form_valid(self, form):
-        if not form.instance.text:
-            form.instance.text = get_title_from_url(form.instance.url)[:50]
         form.instance.shared_by = ShareUser.objects.get(user=self.request.user)
         form.instance.space = Space.objects.get(id=self.kwargs['space_id'])
         return super(CreateView, self).form_valid(form)
@@ -91,11 +89,3 @@ class CommentCreateView(CreateView):
         form.instance.user = ShareUser.objects.get(user=self.request.user)
         form.instance.shared_item = SharedItem.objects.get(id=self.kwargs['shareditem_id'])
         return super(CreateView, self).form_valid(form)
-
-
-def get_title_from_url(url):
-    try:
-        page = get_page_text(url)
-        return page[page.find('<title>') + 7: page.find('</title>')]
-    except Exception as e:
-        print(e)
