@@ -34,4 +34,4 @@ urlpatterns = [
     url(r'space/(?P<space_id>\d+)/comment/(?P<shareditem_id>\d+)$', login_required(CommentCreateView.as_view()), name='comment-add'),
     url(r'space/(?P<space_id>\d+)/add/$', login_required(SharedItemCreateView.as_view(success_url="/")), name='shareditem-add'),
     url(r'profile$', login_required(ShareUserUpdateView.as_view(success_url="/")), name='shareuser-update'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
