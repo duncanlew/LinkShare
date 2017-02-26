@@ -1,23 +1,7 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>LinkShare</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <script
-    src="https://code.jquery.com/jquery-2.2.4.min.js"
-    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-    crossorigin="anonymous"></script>
-       <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
-</head>
+{% extends 'head.html' %}
+{% block base %}
 <body>
-
-  <nav>
+  <nav class="blue lighten-1">
     <div class="nav-wrapper">
       <a href="#" class="brand-logo right">LinkShare</a>
       <a href="#" data-activates="mobile" class="button-collapse"><i class="material-icons">menu</i></a>
@@ -26,12 +10,14 @@
           <li><a href="{% url 'shared-item-list' space.id %}">{{ space.name }}</a></li>
         {% endfor %}
         <li><a href="{% url 'shareuser-update' %}">Edit Profile</a></li>
+        <li><a href="{% url 'spaces-add' %}">Add New Space</a></li>
       </ul>
       <ul class="side-nav" id="mobile">
         {% for space in spaces_list %}
           <li><a href="{% url 'shared-item-list' space.id %}">{{ space.name }}</a></li>
         {% endfor %}
         <li><a href="{% url 'shareuser-update' %}">Edit Profile</a></li>
+        <li><a href="{% url 'spaces-add' %}">Add New Space</a></li>
       </ul>
     </div>
   </nav>
@@ -48,3 +34,4 @@
 </div>
 </body>
 </html>
+{% endblock %}

@@ -5,3 +5,5 @@ pushbullet.py==0.10.0
 requests==2.13.0
 pillow==4.0.0
 django-materializecss-form
+beautifulsoup4
+pillow

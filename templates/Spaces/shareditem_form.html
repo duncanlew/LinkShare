@@ -1,12 +1,13 @@
-{% extends 'base.html' %}
+{% extends 'head.html' %}
 {% load materializecss %}
-{% block title %}Your Spaces{% endblock %}
 
-{% block content %}
-
-  <h2>Share new Item</h2>
+{% block base %}
+  <div class='row'>
+    <div class="col s6 m12">
     <form action="" method="post">{% csrf_token %}
         {{ form|materializecss }}
         <input type="submit" value="Save" class="btn waves-effect waves-light" />
     </form>
+  </div>
+  </div>
 {% endblock %}

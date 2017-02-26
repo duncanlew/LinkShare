@@ -7,6 +7,15 @@ from django.views.generic.detail import DetailView
 import requests
 import http.client, urllib
 from ShareUser.models import *
+from .forms import SharedItemForm
+import re
+from bs4 import BeautifulSoup
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+from PIL import Image
+from .image_helpers import get_page_text
+from io import BytesIO
+
 # Create your views here.
 
 class SpacesListView(ListView):
@@ -49,7 +58,9 @@ class SharedItemListView(ListView):
         context['space'] = space
         context['share_users'] = list(space.added_users.all())
         context['share_users'].append(space.owner)
+        context['form'] = SharedItemForm()
         return context
+
 
 class SharedItemDetailView(DetailView):
     model = SharedItem
@@ -59,9 +70,10 @@ class SharedItemDetailView(DetailView):
         context['comments'] = Comment.objects.filter(shared_item=self.object)
         return context
 
+
 class SharedItemCreateView(CreateView):
     model = SharedItem
-    fields = ['url', 'text']
+    form_class = SharedItemForm
 
     def form_valid(self, form):
         if not form.instance.text:
@@ -69,6 +81,7 @@ class SharedItemCreateView(CreateView):
         form.instance.shared_by = ShareUser.objects.get(user=self.request.user)
         form.instance.space = Space.objects.get(id=self.kwargs['space_id'])
         return super(CreateView, self).form_valid(form)
+
 
 class CommentCreateView(CreateView):
     model = Comment
@@ -79,11 +92,10 @@ class CommentCreateView(CreateView):
         form.instance.shared_item = SharedItem.objects.get(id=self.kwargs['shareditem_id'])
         return super(CreateView, self).form_valid(form)
 
+
 def get_title_from_url(url):
     try:
-        headers = {'headers': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0'}
-        n = requests.get(url, headers=headers)
-        al = n.text
-        return al[al.find('<title>') + 7: al.find('</title>')]
+        page = get_page_text(url)
+        return page[page.find('<title>') + 7: page.find('</title>')]
     except Exception as e:
         print(e)
